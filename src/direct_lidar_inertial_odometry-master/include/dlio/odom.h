@@ -228,6 +228,7 @@ private:
 
   // Geometric Observer
   struct Geo {
+
     bool first_opt_done;
     std::mutex mtx;
     double dp;
@@ -333,5 +334,9 @@ private:
   double geo_Kgb_;
   double geo_abias_max_;
   double geo_gbias_max_;
+
+  int weight_max;
+  int weight_min;
+  int intensityThreshold;
 
 };

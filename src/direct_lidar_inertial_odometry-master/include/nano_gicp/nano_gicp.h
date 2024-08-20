@@ -88,6 +88,7 @@ public:
   void setCorrespondenceRandomness(int k);
   void setMaxCorrespondenceDistance(double corr);
   void setRegularizationMethod(RegularizationMethod method);
+  void setParams(int weight_max=1, int weight_min=1, int intensityThreshold=300);
 
   virtual void swapSourceAndTarget() override;
   virtual void clearSource() override;
@@ -151,9 +152,9 @@ protected:
   std::vector<float> sq_distances_;
   std::vector<int> weights;
 
-  int weight_max=1;
-  int weight_min=1;
-  int intensityThreshold=300;
+  int weight_max;
+  int weight_min;
+  int intensityThreshold;
   int sum_weights;
 };
 }  // namespace nano_gicp

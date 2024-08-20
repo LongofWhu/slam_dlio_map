@@ -86,6 +86,7 @@ dlio::OdomNode::OdomNode(ros::NodeHandle node_handle) : nh(node_handle) {
   this->concave_hull.setAlpha(this->keyframe_thresh_dist_);
   this->concave_hull.setKeepInformation(true);
 
+  this->gicp.setParams(this->weight_max, this->weight_min, this->intensityThreshold);
   this->gicp.setCorrespondenceRandomness(this->gicp_k_correspondences_);
   this->gicp.setMaxCorrespondenceDistance(this->gicp_max_corr_dist_);
   this->gicp.setMaximumIterations(this->gicp_max_iter_);
@@ -93,6 +94,7 @@ dlio::OdomNode::OdomNode(ros::NodeHandle node_handle) : nh(node_handle) {
   this->gicp.setRotationEpsilon(this->gicp_rotation_ep_);
   this->gicp.setInitialLambdaFactor(this->gicp_init_lambda_factor_);
 
+  this->gicp_temp.setParams(this->weight_max, this->weight_min, this->intensityThreshold);
   this->gicp_temp.setCorrespondenceRandomness(this->gicp_k_correspondences_);
   this->gicp_temp.setMaxCorrespondenceDistance(this->gicp_max_corr_dist_);
   this->gicp_temp.setMaximumIterations(this->gicp_max_iter_);
@@ -291,6 +293,9 @@ void dlio::OdomNode::getParams() {
   ros::param::param<double>("~dlio/odom/gicp/transformationEpsilon", this->gicp_transformation_ep_, 0.0005);
   ros::param::param<double>("~dlio/odom/gicp/rotationEpsilon", this->gicp_rotation_ep_, 0.0005);
   ros::param::param<double>("~dlio/odom/gicp/initLambdaFactor", this->gicp_init_lambda_factor_, 1e-9);
+  ros::param::param<int>("~dlio/odom/gicp/weight_max", this->weight_max, 1);
+  ros::param::param<int>("~dlio/odom/gicp/weight_min", this->weight_min, 1);
+  ros::param::param<int>("~dlio/odom/gicp/intensityThreshold", this->intensityThreshold, 300);
 
   // Geometric Observer
   ros::param::param<double>("~dlio/odom/geo/Kp", this->geo_Kp_, 1.0);

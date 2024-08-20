@@ -420,4 +420,12 @@ void NanoGICP<PointSource, PointTarget>::setWeights(const PointCloudTargetConstP
     }    
 }
 
+template <typename PointSource, typename PointTarget>
+void NanoGICP<PointSource,PointTarget>::setParams(int weight_max, int weight_min, int intensityThreshold)
+{
+  this->weight_max = weight_max;
+  this->weight_min = weight_min;
+  this->intensityThreshold = intensityThreshold;
+}
+
 }  // namespace nano_gicp
