@@ -1,0 +1,8 @@
+prefix=/home/long/Project/dlio/devel
+
+Name: direct_lidar_inertial_odometry
+Description: Description of direct_lidar_inertial_odometry
+Version: 1.1.1
+Cflags: -I/home/long/Project/dlio/devel/include -I/home/long/Project/dlio/src/direct_lidar_inertial_odometry-master/include
+Libs: -L${prefix}/lib -ldirect_lidar_inertial_odometry -lnano_gicp -lnanoflann
+Requires: roscpp std_msgs sensor_msgs geometry_msgs pcl_ros

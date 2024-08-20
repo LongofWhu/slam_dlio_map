@@ -1,2 +1,2 @@
-
--DCATKIN_DEVEL_PREFIX=/home/long/Project/dlio/devel -DCMAKE_INSTALL_PREFIX=/home/long/Project/dlio/install -G Unix Makefiles
+direct_lidar_inertial_odometry-master
+-DCMAKE_BUILD_TYPE=RelWithDebInfo -DCATKIN_DEVEL_PREFIX=/home/long/Project/dlio/devel -DCMAKE_INSTALL_PREFIX=/home/long/Project/dlio/install -G Unix Makefiles
