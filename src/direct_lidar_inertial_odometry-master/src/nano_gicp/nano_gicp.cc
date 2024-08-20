@@ -248,6 +248,8 @@ template <typename PointSource, typename PointTarget>
 double NanoGICP<PointSource, PointTarget>::linearize(const Eigen::Isometry3d& trans, Eigen::Matrix<double, 6, 6>* H, Eigen::Matrix<double, 6, 1>* b) {
   update_correspondences(trans);
 
+  sum_weights = 0;
+  setWeights(input_,target_);
   double sum_errors = 0.0;
   std::vector<Eigen::Matrix<double, 6, 6>, Eigen::aligned_allocator<Eigen::Matrix<double, 6, 6>>> Hs(num_threads_);
   std::vector<Eigen::Matrix<double, 6, 1>, Eigen::aligned_allocator<Eigen::Matrix<double, 6, 1>>> bs(num_threads_);
@@ -256,7 +258,7 @@ double NanoGICP<PointSource, PointTarget>::linearize(const Eigen::Isometry3d& tr
     bs[i].setZero();
   }
 
-#pragma omp parallel for num_threads(num_threads_) reduction(+ : sum_errors) schedule(guided, 8)
+#pragma omp parallel for num_threads(num_threads_) reduction(+ : sum_errors, sum_weights) schedule(guided, 8)
   for (int i = 0; i < input_->size(); i++) {
     int target_index = correspondences_[i];
     if (target_index < 0) {
@@ -270,7 +272,8 @@ double NanoGICP<PointSource, PointTarget>::linearize(const Eigen::Isometry3d& tr
     const Eigen::Vector4d transed_mean_A = trans * mean_A;
     const Eigen::Vector4d error = mean_B - transed_mean_A;
 
-    sum_errors += error.transpose() * mahalanobis_[i] * error;
+    sum_errors += weights[i] * error.transpose() * mahalanobis_[i] * error;
+    sum_weights += weights[i]; 
 
     if (H == nullptr || b == nullptr) {
       continue;
@@ -282,8 +285,8 @@ double NanoGICP<PointSource, PointTarget>::linearize(const Eigen::Isometry3d& tr
 
     Eigen::Matrix<double, 4, 6> jlossexp = dtdx0;
 
-    Eigen::Matrix<double, 6, 6> Hi = jlossexp.transpose() * mahalanobis_[i] * jlossexp;
-    Eigen::Matrix<double, 6, 1> bi = jlossexp.transpose() * mahalanobis_[i] * error;
+    Eigen::Matrix<double, 6, 6> Hi = weights[i] * jlossexp.transpose() * mahalanobis_[i] * jlossexp;
+    Eigen::Matrix<double, 6, 1> bi = weights[i] * jlossexp.transpose() * mahalanobis_[i] * error;
 
     Hs[omp_get_thread_num()] += Hi;
     bs[omp_get_thread_num()] += bi;
@@ -297,15 +300,19 @@ double NanoGICP<PointSource, PointTarget>::linearize(const Eigen::Isometry3d& tr
       (*b) += bs[i];
     }
   }
-
-  return sum_errors;
+  (*H) = (*H)/sum_weights;
+  (*b) = (*b)/sum_weights;
+  return sum_errors/sum_weights;
 }
 
 template <typename PointSource, typename PointTarget>
 double NanoGICP<PointSource, PointTarget>::compute_error(const Eigen::Isometry3d& trans) {
   double sum_errors = 0.0;
 
-#pragma omp parallel for num_threads(num_threads_) reduction(+ : sum_errors) schedule(guided, 8)
+  sum_weights = 0;
+  setWeights(input_,target_);
+
+#pragma omp parallel for num_threads(num_threads_) reduction(+ : sum_errors, sum_weights) schedule(guided, 8)
   for (int i = 0; i < input_->size(); i++) {
     int target_index = correspondences_[i];
     if (target_index < 0) {
@@ -319,10 +326,11 @@ double NanoGICP<PointSource, PointTarget>::compute_error(const Eigen::Isometry3d
     const Eigen::Vector4d transed_mean_A = trans * mean_A;
     const Eigen::Vector4d error = mean_B - transed_mean_A;
 
-    sum_errors += error.transpose() * mahalanobis_[i] * error;
+    sum_errors += weights[i] * error.transpose() * mahalanobis_[i] * error;
+    sum_weights += weights[i];
   }
 
-  return sum_errors;
+  return sum_errors/sum_weights;
 }
 
 template <typename PointSource, typename PointTarget>
@@ -389,6 +397,27 @@ bool NanoGICP<PointSource, PointTarget>::calculate_covariances(
   density = sum_k_sq_distances / cloud->size();
 
   return true;
+}
+
+// set weight for source cloud
+template <typename PointSource, typename PointTarget>
+void NanoGICP<PointSource, PointTarget>::setWeights(const PointCloudTargetConstPtr& input, const PointCloudTargetConstPtr& target) {
+  if (weights.size()!=0)weights.clear();
+
+  for (std::size_t i = 0; i < input->size(); i++)  
+    { if(correspondences_[i]>=0)
+      {
+        if(input->points[i].intensity > intensityThreshold && target->points[correspondences_[i]].intensity > intensityThreshold)
+        {
+          std::cout<<"set weight by intensity successfully!"<<std::endl;
+          weights.push_back(weight_max);
+        }
+        else 
+          weights.push_back(weight_min);
+      }
+      else 
+        weights.push_back(weight_min);
+    }    
 }
 
 }  // namespace nano_gicp

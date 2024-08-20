@@ -200,12 +200,6 @@ pcl/kdtree/kdtree_flann.h
 nano_gicp/nanoflann.h
 /home/long/Project/dlio/src/direct_lidar_inertial_odometry-master/include/nano_gicp/nano_gicp/nanoflann.h
 
-/home/long/Project/dlio/src/direct_lidar_inertial_odometry-master/src/nano_gicp/lsq_registration.cc
-dlio/dlio.h
-/home/long/Project/dlio/src/direct_lidar_inertial_odometry-master/src/nano_gicp/dlio/dlio.h
-nano_gicp/lsq_registration.h
-/home/long/Project/dlio/src/direct_lidar_inertial_odometry-master/src/nano_gicp/nano_gicp/lsq_registration.h
-
 /home/long/Project/dlio/src/direct_lidar_inertial_odometry-master/src/nano_gicp/nano_gicp.cc
 dlio/dlio.h
 /home/long/Project/dlio/src/direct_lidar_inertial_odometry-master/src/nano_gicp/dlio/dlio.h

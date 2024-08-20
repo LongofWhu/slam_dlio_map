@@ -124,6 +124,8 @@ protected:
   template<typename PointT>
   bool calculate_covariances(const typename pcl::PointCloud<PointT>::ConstPtr& cloud, const nanoflann::KdTreeFLANN<PointT>& kdtree, CovarianceList& covariances, float& density);
 
+  virtual void setWeights(const PointCloudTargetConstPtr& input, const PointCloudTargetConstPtr& target);
+
 public:
   std::shared_ptr<const nanoflann::KdTreeFLANN<PointSource>> source_kdtree_;
   std::shared_ptr<const nanoflann::KdTreeFLANN<PointTarget>> target_kdtree_;
@@ -147,6 +149,12 @@ protected:
 
   std::vector<int> correspondences_;
   std::vector<float> sq_distances_;
+  std::vector<int> weights;
+
+  int weight_max=1;
+  int weight_min=1;
+  int intensityThreshold=300;
+  int sum_weights;
 };
 }  // namespace nano_gicp
 
