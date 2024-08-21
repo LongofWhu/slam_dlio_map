@@ -79,6 +79,7 @@ private:
   void buildSubmap(State vehicle_state);
   void buildKeyframesAndSubmap(State vehicle_state);
   void pauseSubmapBuildIfNeeded();
+  void reloadGicp();
 
   void debug();
 
@@ -333,5 +334,8 @@ private:
   double geo_Kgb_;
   double geo_abias_max_;
   double geo_gbias_max_;
+
+  bool loadFile;
+  std::string mapFile;
 
 };

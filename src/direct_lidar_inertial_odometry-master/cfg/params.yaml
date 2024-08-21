@@ -19,6 +19,8 @@ dlio:
     imu: imu
 
   map:
+    loadFile: false
+    mapFile: "myMap.pcd"
     waitUntilMove: true
     dense:
       filtered: false

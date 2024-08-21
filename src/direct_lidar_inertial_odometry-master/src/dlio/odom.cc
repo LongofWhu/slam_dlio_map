@@ -120,6 +120,8 @@ dlio::OdomNode::OdomNode(ros::NodeHandle node_handle) : nh(node_handle) {
   this->metrics.spaciousness.push_back(0.);
   this->metrics.density.push_back(this->gicp_max_corr_dist_);
 
+  if(this->loadFile)this->reloadGicp();
+
   // CPU Specs
   char CPUBrandString[0x40];
   memset(CPUBrandString, 0, sizeof(CPUBrandString));
@@ -206,6 +208,10 @@ void dlio::OdomNode::getParams() {
 
   // Wait until movement to publish map
   ros::param::param<bool>("~dlio/map/waitUntilMove", this->wait_until_move_, false);
+
+  // load map from file
+  ros::param::param<bool>("~dlio/map/loadFile", this->loadFile, false);
+  ros::param::param<std::string>("~dlio/map/mapFile", this->mapFile, "/home/long/Project/dlio/map/defalt.pcd");
 
   // Crop Box Filter
   ros::param::param<double>("~dlio/odom/preprocessing/cropBoxFilter/size", this->crop_size_, 1.0);
@@ -800,34 +806,36 @@ void dlio::OdomNode::callbackPointCloud(const sensor_msgs::PointCloud2ConstPtr& 
   // Set new frame as input source
   this->setInputSource();
 
-  // Set initial frame as first keyframe
-  if (this->keyframes.size() == 0) {
-    this->initializeInputTarget();
-    this->main_loop_running = false;
-    this->submap_future =
-      std::async( std::launch::async, &dlio::OdomNode::buildKeyframesAndSubmap, this, this->state );
-    this->submap_future.wait(); // wait until completion
-    return;
+  if(!this->loadFile){
+    // Set initial frame as first keyframe
+    if (this->keyframes.size() == 0) {
+      this->initializeInputTarget();
+      this->main_loop_running = false;
+      this->submap_future =
+        std::async( std::launch::async, &dlio::OdomNode::buildKeyframesAndSubmap, this, this->state );
+      this->submap_future.wait(); // wait until completion
+      return;
+    }
   }
-
   // Get the next pose via IMU + S2M + GEO
   this->getNextPose();
 
-  // Update current keyframe poses and map
-  this->updateKeyframes();
+  if(!this->loadFile){
+    // Update current keyframe poses and map
+    this->updateKeyframes();
 
-  // Build keyframe normals and submap if needed (and if we're not already waiting)
-  if (this->new_submap_is_ready) {
-    this->main_loop_running = false;
-    this->submap_future =
-      std::async( std::launch::async, &dlio::OdomNode::buildKeyframesAndSubmap, this, this->state );
-  } else {
-    lock.lock();
-    this->main_loop_running = false;
-    lock.unlock();
-    this->submap_build_cv.notify_one();
+    // Build keyframe normals and submap if needed (and if we're not already waiting)
+    if (this->new_submap_is_ready) {
+      this->main_loop_running = false;
+      this->submap_future =
+        std::async( std::launch::async, &dlio::OdomNode::buildKeyframesAndSubmap, this, this->state );
+    } else {
+      lock.lock();
+      this->main_loop_running = false;
+      lock.unlock();
+      this->submap_build_cv.notify_one();
+    }
   }
-
   // Update trajectory
   this->trajectory.push_back( std::make_pair(this->state.p, this->state.q) );
 
@@ -2013,4 +2021,13 @@ void dlio::OdomNode::debug() {
 
   std::cout << "+-------------------------------------------------------------------+" << std::endl;
 
+}
+
+void dlio::OdomNode::reloadGicp(){
+  pcl::PointCloud<PointType>::Ptr submap_cloud_ (boost::make_shared<pcl::PointCloud<PointType>>());
+  pcl::io::loadPCDFile<PointType>(this->mapFile, *submap_cloud_);
+  this->submap_cloud = submap_cloud_;
+  this->gicp.setInputTarget(this->submap_cloud);
+  this->gicp.calculateTargetCovariances();
+  printf(" map size:%d \n",this->submap_cloud->size());
 }
