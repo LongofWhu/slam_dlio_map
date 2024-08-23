@@ -5,5 +5,8 @@
     "python.analysis.extraPaths": [
         "/opt/ros/noetic/lib/python3/dist-packages"
     ],
-    "cmake.sourceDirectory": "/home/long/Project/dlio/src/direct_lidar_inertial_odometry-master"
+    "cmake.sourceDirectory": "/home/long/Project/dlio/src/direct_lidar_inertial_odometry-master",
+    "files.associations": {
+        "memory": "cpp"
+    }
 }

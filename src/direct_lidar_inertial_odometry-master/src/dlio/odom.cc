@@ -1012,7 +1012,8 @@ void dlio::OdomNode::callbackImu(const sensor_msgs::Imu::ConstPtr& imu_raw) {
 }
 
 void dlio::OdomNode::getNextPose() {
-
+  if(!this->loadFile)
+  {
   // Check if the new submap is ready to be used
   this->new_submap_is_ready = (this->submap_future.wait_for(std::chrono::seconds(0)) == std::future_status::ready);
 
@@ -1029,7 +1030,8 @@ void dlio::OdomNode::getNextPose() {
 
     this->submap_hasChanged = false;
   }
-
+  }
+  
   // Align with current submap with global IMU transformation as initial guess
   pcl::PointCloud<PointType>::Ptr aligned (boost::make_shared<pcl::PointCloud<PointType>>());
   this->gicp.align(*aligned);

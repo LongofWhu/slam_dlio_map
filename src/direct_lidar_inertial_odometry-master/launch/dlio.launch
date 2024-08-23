@@ -15,14 +15,14 @@
   <arg name="robot_namespace" default="robot"/>
   <arg name="rviz" default="true"/>
 
-  <arg name="pointcloud_topic" default="/robot/lidar"/>
-  <arg name="imu_topic" default="/robot/imu"/>
+  <arg name="pointcloud_topic" default="/rslidar_points"/>
+  <arg name="imu_topic" default="/imu/data"/>
 
   <!-- DLIO Odometry Node -->
   <node ns="$(arg robot_namespace)" name="dlio_odom" pkg="direct_lidar_inertial_odometry" type="dlio_odom_node" output="screen" clear_params="true">
 
     <!-- Load parameters -->
-    <rosparam file="$(find direct_lidar_inertial_odometry)/cfg/dlio.yaml" command="load"/>
+    <rosparam file="$(find direct_lidar_inertial_odometry)/cfg/dlio_yct.yaml" command="load"/>
     <rosparam file="$(find direct_lidar_inertial_odometry)/cfg/params.yaml" command="load"/>
 
     <!-- Subscriptions -->

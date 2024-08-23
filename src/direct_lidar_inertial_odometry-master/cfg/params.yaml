@@ -20,7 +20,7 @@ dlio:
 
   map:
     loadFile: false
-    mapFile: "myMap.pcd"
+    mapFile: "/home/long/map/0413extra.pcd"
     waitUntilMove: true
     dense:
       filtered: false
