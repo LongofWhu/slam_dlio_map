@@ -7,6 +7,11 @@
     ],
     "cmake.sourceDirectory": "/home/long/Project/dlio/src/direct_lidar_inertial_odometry-master",
     "files.associations": {
-        "memory": "cpp"
+        "memory": "cpp",
+        "core": "cpp",
+        "deque": "cpp",
+        "string": "cpp",
+        "vector": "cpp",
+        "future": "cpp"
     }
 }

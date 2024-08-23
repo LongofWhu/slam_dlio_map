@@ -2032,4 +2032,16 @@ void dlio::OdomNode::reloadGicp(){
   this->gicp.setInputTarget(this->submap_cloud);
   this->gicp.calculateTargetCovariances();
   printf(" map size:%d \n",this->submap_cloud->size());
+
+  // set keyframe
+  Eigen::Vector3f p = {0,0,0};
+  Eigen::Quaternionf q = {0,0,0,1};
+  this->keyframes.push_back(std::make_pair(std::make_pair(p, q), this->submap_cloud));
+  this->keyframe_timestamps.push_back(ros::Time(0));
+  this->keyframe_normals.push_back(this->gicp.getTargetCovariances());
+  this->keyframe_transformations.push_back(this->T_corr);
+
+  this->submap_future =
+    std::async( std::launch::async, &dlio::OdomNode::buildKeyframesAndSubmap, this, this->state );
+  this->submap_future.wait(); // wait until completion
 }
