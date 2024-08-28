@@ -775,6 +775,11 @@ void dlio::OdomNode::callbackPointCloud(const sensor_msgs::PointCloud2ConstPtr& 
   if (this->first_scan_stamp == 0.) {
     this->first_scan_stamp = pc->header.stamp.toSec();
   }
+  if(this->loadFile) 
+    {
+      if(this->prev_scan_stamp == 0.)
+        this->prev_scan_stamp = this->first_scan_stamp;
+    }
 
   // DLIO Initialization procedures (IMU calib, gravity align)
   if (!this->dlio_initialized) {

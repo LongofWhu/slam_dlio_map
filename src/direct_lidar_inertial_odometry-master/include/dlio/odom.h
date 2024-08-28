@@ -176,7 +176,7 @@ private:
   // Timestamps
   ros::Time scan_header_stamp;
   double scan_stamp;
-  double prev_scan_stamp;
+  double prev_scan_stamp = 0.;
   double scan_dt;
   std::vector<double> comp_times;
   std::vector<double> imu_rates;

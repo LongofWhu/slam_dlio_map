@@ -208,6 +208,10 @@ nano_gicp/nanoflann.h
 dlio/odom.h
 /home/long/Project/dlio/src/direct_lidar_inertial_odometry-master/src/dlio/dlio/odom.h
 
+/home/long/Project/dlio/src/direct_lidar_inertial_odometry-master/src/dlio/odom_node.cc
+dlio/odom.h
+/home/long/Project/dlio/src/direct_lidar_inertial_odometry-master/src/dlio/dlio/odom.h
+
 /opt/ros/noetic/include/geometry_msgs/Point.h
 string
 -
