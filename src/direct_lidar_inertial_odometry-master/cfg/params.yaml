@@ -19,7 +19,7 @@ dlio:
     imu: imu
 
   map:
-    loadFile: false
+    loadFile: true
     mapFile: "/home/long/map/0413extra.pcd"
     waitUntilMove: true
     dense:

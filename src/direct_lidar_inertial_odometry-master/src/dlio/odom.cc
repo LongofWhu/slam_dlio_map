@@ -768,8 +768,10 @@ void dlio::OdomNode::callbackPointCloud(const sensor_msgs::PointCloud2ConstPtr& 
   this->main_loop_running = true;
   lock.unlock();
 
+  // 设置当前时间
   double then = ros::Time::now().toSec();
 
+  // 如果是第一帧点云，记住第一帧时间
   if (this->first_scan_stamp == 0.) {
     this->first_scan_stamp = pc->header.stamp.toSec();
   }
@@ -779,12 +781,13 @@ void dlio::OdomNode::callbackPointCloud(const sensor_msgs::PointCloud2ConstPtr& 
     this->initializeDLIO();
   }
 
-  // Convert incoming scan into DLIO format
+  // Convert incoming scan into DLIO format接受ROSbag数据转换为可处理点云数据
   this->getScanFromROS(pc);
 
-  // Preprocess points
+  // Preprocess points畸变校正，IMU数据融合，方格滤波
   this->preprocessPoints();
 
+  // 如果IMU数据成功接收
   if (!this->first_valid_scan) {
     return;
   }
@@ -803,16 +806,16 @@ void dlio::OdomNode::callbackPointCloud(const sensor_msgs::PointCloud2ConstPtr& 
     this->setAdaptiveParams();
   }
 
-  // Set new frame as input source
+  // Set new frame as input source设置input_为当前current_scan
   this->setInputSource();
 
   if(!this->loadFile){
     // Set initial frame as first keyframe
     if (this->keyframes.size() == 0) {
-      this->initializeInputTarget();
+      this->initializeInputTarget();  // 设置pre_scan_stamp为当前帧stamp，设置keyframe[i]及其时间戳、方差、tf
       this->main_loop_running = false;
       this->submap_future =
-        std::async( std::launch::async, &dlio::OdomNode::buildKeyframesAndSubmap, this, this->state );
+        std::async( std::launch::async, &dlio::OdomNode::buildKeyframesAndSubmap, this, this->state ); // 计算更新keyframe
       this->submap_future.wait(); // wait until completion
       return;
     }
@@ -1042,7 +1045,7 @@ void dlio::OdomNode::getNextPose() {
 
   // Update next global pose
   // Both source and target clouds are in the global frame now, so tranformation is global
-  this->propagateGICP();
+  this->propagateGICP();  // 将T赋值给lidarPose
 
   // Geometric observer update
   this->updateState();
@@ -1684,7 +1687,7 @@ void dlio::OdomNode::pushSubmapIndices(std::vector<float> dists, int k, std::vec
 }
 
 void dlio::OdomNode::buildSubmap(State vehicle_state) {
-
+  
   // clear vector of keyframe indices to use for submap
   this->submap_kf_idx_curr.clear();
 
@@ -2041,7 +2044,11 @@ void dlio::OdomNode::reloadGicp(){
   this->keyframe_normals.push_back(this->gicp.getTargetCovariances());
   this->keyframe_transformations.push_back(this->T_corr);
 
+  this->main_loop_running = false;
   this->submap_future =
     std::async( std::launch::async, &dlio::OdomNode::buildKeyframesAndSubmap, this, this->state );
   this->submap_future.wait(); // wait until completion
+
+  this->publish_keyframe_thread = std::thread( &dlio::OdomNode::publishKeyframe, this, this->keyframes[0], this->keyframe_timestamps[0] );
+  this->publish_keyframe_thread.detach();
 }
