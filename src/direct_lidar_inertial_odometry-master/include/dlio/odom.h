@@ -337,5 +337,9 @@ private:
 
   bool loadFile;
   std::string mapFile;
+  std::vector<float> p_prior;
+  std::vector<float> q_prior;
+  Eigen::Vector3f P_prior;
+  Eigen::Quaternionf Q_prior;
 
 };

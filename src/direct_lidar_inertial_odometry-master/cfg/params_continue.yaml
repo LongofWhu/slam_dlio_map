@@ -29,8 +29,8 @@ dlio:
 
   odom:
     initialState:
-      p_prior: [0., 0., 0.]
-      q_prior: [1., 0., 0., 0.]
+      p_prior: [-5.0916, -0.4417, -1.4298]
+      q_prior: [-0.9998, -0.0022, 0.0197, -0.0013]
     gravity: 9.80665
     computeTimeOffset: true
 
