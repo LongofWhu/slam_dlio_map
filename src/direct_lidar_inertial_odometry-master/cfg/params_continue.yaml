@@ -30,7 +30,7 @@ dlio:
   odom:
     initialState:
       p_prior: [13.1955, 4.5216, 0.1008]
-      q_prior: [0.8216, 0.0023, -0.0124, 0.5699]
+      q_prior: [0.64610369, 0.00543099, -0.0113822, 0.76312686]
     gravity: 9.80665
     computeTimeOffset: true
 

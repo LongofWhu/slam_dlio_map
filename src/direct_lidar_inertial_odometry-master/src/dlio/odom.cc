@@ -46,14 +46,11 @@ dlio::OdomNode::OdomNode(ros::NodeHandle node_handle) : nh(node_handle) {
   this->T = Eigen::Matrix4f::Identity();
   this->T_prior = Eigen::Matrix4f::Identity();
   this->T_corr = Eigen::Matrix4f::Identity();
-  // this->T.block<3,1>(0,3) = this->P_prior;
-  // this->T.block<3,3>(0,0) = this->Q_prior.toRotationMatrix();
 
   this->origin = Eigen::Vector3f(0., 0., 0.);
   this->state.p = Eigen::Vector3f(0., 0., 0.);
   this->state.p = this->P_prior;
   this->state.q = Eigen::Quaternionf(1., 0., 0., 0.);
-  this->state.q = this->Q_prior;
   this->state.v.lin.b = Eigen::Vector3f(0., 0., 0.);
   this->state.v.lin.w = Eigen::Vector3f(0., 0., 0.);
   this->state.v.ang.b = Eigen::Vector3f(0., 0., 0.);
@@ -954,7 +951,7 @@ void dlio::OdomNode::callbackImu(const sensor_msgs::Imu::ConstPtr& imu_raw) {
         Eigen::Quaternionf grav_q = Eigen::Quaternionf::FromTwoVectors(grav_vec, Eigen::Vector3f(0., 0., this->gravity_));
 
         // set gravity aligned orientation
-        this->state.q = grav_q;
+        this->state.q = grav_q * this->Q_prior;
         this->T.block(0,0,3,3) = this->state.q.toRotationMatrix();
         this->lidarPose.q = this->state.q;
 
@@ -1064,15 +1061,37 @@ void dlio::OdomNode::getNextPose() {
                                 + to_string_with_precision(this->state.p[1], 4) + ", "
                                 + to_string_with_precision(this->state.p[2], 4)
     << "|" << std::endl;
+  std::cout << "| " << std::left << std::setfill(' ') << std::setw(66)
+    << "Orientation  {W} [wxyz] :: " + to_string_with_precision(this->state.q.w(), 4) + ", "
+                                + to_string_with_precision(this->state.q.x(), 4) + ", "
+                                + to_string_with_precision(this->state.q.y(), 4) + ", "
+                                + to_string_with_precision(this->state.q.z(), 4)
+    << "|" << std::endl;
+  std::cout << "| " << std::left << std::setfill(' ') << std::setw(66)
+    << "Lin Velocity {B}  [xyz] :: " + to_string_with_precision(this->state.v.lin.b[0], 4) + ", "
+                                + to_string_with_precision(this->state.v.lin.b[1], 4) + ", "
+                                + to_string_with_precision(this->state.v.lin.b[2], 4)
+    << "|" << std::endl;
+  std::cout << "| " << std::left << std::setfill(' ') << std::setw(66)
+    << "Ang Velocity {B}  [xyz] :: " + to_string_with_precision(this->state.v.ang.b[0], 4) + ", "
+                                + to_string_with_precision(this->state.v.ang.b[1], 4) + ", "
+                                + to_string_with_precision(this->state.v.ang.b[2], 4)
+    << "|" << std::endl;
+  std::cout << "| " << std::left << std::setfill(' ') << std::setw(66)
+    << "Accel Bias        [xyz] :: " + to_string_with_precision(this->state.b.accel[0], 8) + ", "
+                                + to_string_with_precision(this->state.b.accel[1], 8) + ", "
+                                + to_string_with_precision(this->state.b.accel[2], 8)
+    << "|" << std::endl;
+  std::cout << "| " << std::left << std::setfill(' ') << std::setw(66)
+    << "Gyro Bias         [xyz] :: " + to_string_with_precision(this->state.b.gyro[0], 8) + ", "
+                                + to_string_with_precision(this->state.b.gyro[1], 8) + ", "
+                                + to_string_with_precision(this->state.b.gyro[2], 8)
+    << "|" << std::endl;
   std::cout << "|                                                                   |" << std::endl;
 
   // Get final transformation in global frame
   this->T_corr = this->gicp.getFinalTransformation(); // "correction" transformation配准前后的变换矩阵
   this->T = this->T_corr * this->T_prior;
-
-  std::cout<<"T_corr: "<<std::endl<<this->T_corr<<std::endl;
-  std::cout<<"T_prior: "<<std::endl<<this->T_prior<<std::endl;
-  std::cout<<"T: "<<std::endl<<this->T<<std::endl;
 
   // Update next global pose
   // Both source and target clouds are in the global frame now, so tranformation is global
@@ -1085,6 +1104,32 @@ void dlio::OdomNode::getNextPose() {
     << "Position     {W}  [xyz] :: " + to_string_with_precision(this->state.p[0], 4) + ", "
                                 + to_string_with_precision(this->state.p[1], 4) + ", "
                                 + to_string_with_precision(this->state.p[2], 4)
+    << "|" << std::endl;
+  std::cout << "| " << std::left << std::setfill(' ') << std::setw(66)
+    << "Orientation  {W} [wxyz] :: " + to_string_with_precision(this->state.q.w(), 4) + ", "
+                                + to_string_with_precision(this->state.q.x(), 4) + ", "
+                                + to_string_with_precision(this->state.q.y(), 4) + ", "
+                                + to_string_with_precision(this->state.q.z(), 4)
+    << "|" << std::endl;
+  std::cout << "| " << std::left << std::setfill(' ') << std::setw(66)
+    << "Lin Velocity {B}  [xyz] :: " + to_string_with_precision(this->state.v.lin.b[0], 4) + ", "
+                                + to_string_with_precision(this->state.v.lin.b[1], 4) + ", "
+                                + to_string_with_precision(this->state.v.lin.b[2], 4)
+    << "|" << std::endl;
+  std::cout << "| " << std::left << std::setfill(' ') << std::setw(66)
+    << "Ang Velocity {B}  [xyz] :: " + to_string_with_precision(this->state.v.ang.b[0], 4) + ", "
+                                + to_string_with_precision(this->state.v.ang.b[1], 4) + ", "
+                                + to_string_with_precision(this->state.v.ang.b[2], 4)
+    << "|" << std::endl;
+  std::cout << "| " << std::left << std::setfill(' ') << std::setw(66)
+    << "Accel Bias        [xyz] :: " + to_string_with_precision(this->state.b.accel[0], 8) + ", "
+                                + to_string_with_precision(this->state.b.accel[1], 8) + ", "
+                                + to_string_with_precision(this->state.b.accel[2], 8)
+    << "|" << std::endl;
+  std::cout << "| " << std::left << std::setfill(' ') << std::setw(66)
+    << "Gyro Bias         [xyz] :: " + to_string_with_precision(this->state.b.gyro[0], 8) + ", "
+                                + to_string_with_precision(this->state.b.gyro[1], 8) + ", "
+                                + to_string_with_precision(this->state.b.gyro[2], 8)
     << "|" << std::endl;
   std::cout << "|                                                                   |" << std::endl;
 
@@ -1364,6 +1409,8 @@ void dlio::OdomNode::updateState() {
   Eigen::Vector3f pin = this->lidarPose.p;
   Eigen::Quaternionf qin = this->lidarPose.q;
   double dt = this->scan_stamp - this->prev_scan_stamp;
+
+  if(dt>2.0)dt=0.1;
   std::cout<<"dt: "<<dt<<std::endl;
 
   Eigen::Quaternionf qe, qhat, qcorr;
@@ -1386,6 +1433,7 @@ void dlio::OdomNode::updateState() {
   Eigen::Vector3f err_body;
   std::cout<<"pin: "<<pin<<std::endl;
   std::cout<<"err: "<<err<<std::endl;
+  std::cout<<"qcorr: "<<qcorr<<std::endl;
 
   err_body = qhat.conjugate()._transformVector(err);
 
