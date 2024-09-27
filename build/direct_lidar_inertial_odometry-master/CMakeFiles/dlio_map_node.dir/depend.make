@@ -18,6 +18,7 @@ direct_lidar_inertial_odometry-master/CMakeFiles/dlio_map_node.dir/src/dlio/map.
 direct_lidar_inertial_odometry-master/CMakeFiles/dlio_map_node.dir/src/dlio/map.cc.o: /opt/ros/noetic/include/geometry_msgs/PoseArray.h
 direct_lidar_inertial_odometry-master/CMakeFiles/dlio_map_node.dir/src/dlio/map.cc.o: /opt/ros/noetic/include/geometry_msgs/PoseStamped.h
 direct_lidar_inertial_odometry-master/CMakeFiles/dlio_map_node.dir/src/dlio/map.cc.o: /opt/ros/noetic/include/geometry_msgs/PoseWithCovariance.h
+direct_lidar_inertial_odometry-master/CMakeFiles/dlio_map_node.dir/src/dlio/map.cc.o: /opt/ros/noetic/include/geometry_msgs/PoseWithCovarianceStamped.h
 direct_lidar_inertial_odometry-master/CMakeFiles/dlio_map_node.dir/src/dlio/map.cc.o: /opt/ros/noetic/include/geometry_msgs/Quaternion.h
 direct_lidar_inertial_odometry-master/CMakeFiles/dlio_map_node.dir/src/dlio/map.cc.o: /opt/ros/noetic/include/geometry_msgs/QuaternionStamped.h
 direct_lidar_inertial_odometry-master/CMakeFiles/dlio_map_node.dir/src/dlio/map.cc.o: /opt/ros/noetic/include/geometry_msgs/Transform.h
@@ -509,6 +510,7 @@ direct_lidar_inertial_odometry-master/CMakeFiles/dlio_map_node.dir/src/dlio/map_
 direct_lidar_inertial_odometry-master/CMakeFiles/dlio_map_node.dir/src/dlio/map_node.cc.o: /opt/ros/noetic/include/geometry_msgs/PoseArray.h
 direct_lidar_inertial_odometry-master/CMakeFiles/dlio_map_node.dir/src/dlio/map_node.cc.o: /opt/ros/noetic/include/geometry_msgs/PoseStamped.h
 direct_lidar_inertial_odometry-master/CMakeFiles/dlio_map_node.dir/src/dlio/map_node.cc.o: /opt/ros/noetic/include/geometry_msgs/PoseWithCovariance.h
+direct_lidar_inertial_odometry-master/CMakeFiles/dlio_map_node.dir/src/dlio/map_node.cc.o: /opt/ros/noetic/include/geometry_msgs/PoseWithCovarianceStamped.h
 direct_lidar_inertial_odometry-master/CMakeFiles/dlio_map_node.dir/src/dlio/map_node.cc.o: /opt/ros/noetic/include/geometry_msgs/Quaternion.h
 direct_lidar_inertial_odometry-master/CMakeFiles/dlio_map_node.dir/src/dlio/map_node.cc.o: /opt/ros/noetic/include/geometry_msgs/QuaternionStamped.h
 direct_lidar_inertial_odometry-master/CMakeFiles/dlio_map_node.dir/src/dlio/map_node.cc.o: /opt/ros/noetic/include/geometry_msgs/Transform.h

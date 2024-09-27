@@ -30,6 +30,10 @@ dlio::OdomNode::OdomNode(ros::NodeHandle node_handle) : nh(node_handle) {
       &dlio::OdomNode::callbackPointCloud, this, ros::TransportHints().tcpNoDelay());
   this->imu_sub = this->nh.subscribe("imu", 1000,
       &dlio::OdomNode::callbackImu, this, ros::TransportHints().tcpNoDelay());
+  // this->initialpose_sub = this->nh.subscribe("initialpose", 1,
+  //     &dlio::OdomNode::callbackInitialpose, this, ros::TransportHints().tcpNoDelay());
+  this->initialpose_thread = std::thread(&dlio::OdomNode::initialposeThread, this);
+  this->initialpose_thread.detach();
 
   this->odom_pub     = this->nh.advertise<nav_msgs::Odometry>("odom", 1, true);
   this->pose_pub     = this->nh.advertise<geometry_msgs::PoseStamped>("pose", 1, true);
@@ -578,11 +582,19 @@ void dlio::OdomNode::preprocessPoints() {
     std::vector<Eigen::Matrix4f, Eigen::aligned_allocator<Eigen::Matrix4f>> frames;
       frames = this->integrateImu(this->prev_scan_stamp, this->lidarPose.q, this->lidarPose.p,
                                 this->geo.prev_vel.cast<float>(), {this->scan_stamp});
-
-    if (frames.size() > 0) {
-      this->T_prior = frames.back();
-    } else {
-      this->T_prior = this->T;
+    if(this->initialpose_received == false){
+        if (frames.size() > 0) {
+          this->T_prior = frames.back();
+        } else {
+          this->T_prior = this->T;
+        }
+    }
+    else{
+      this->state.p[0] = this->P_initial[0];
+      this->state.p[1] = this->P_initial[1];
+      this->T_prior.block<2,1>(0,3) = this->P_initial;
+      this->T_prior.block<3,3>(0,0) = this->Q_initial.toRotationMatrix();
+      this->initialpose_received = false;
     }
 
     }
@@ -725,7 +737,16 @@ void dlio::OdomNode::deskewPointcloud() {
   }
 
   // update prior to be the estimated pose at the median time of the scan (corresponds to this->scan_stamp)
-  this->T_prior = frames[median_pt_index];
+  if(this->initialpose_received == false){
+    this->T_prior = frames[median_pt_index];
+  }
+  else{
+    this->state.p[0] = this->P_initial[0];
+    this->state.p[1] = this->P_initial[1];
+    this->T_prior.block<2,1>(0,3) = this->P_initial;
+    this->T_prior.block<3,3>(0,0) = this->Q_initial.toRotationMatrix();
+    this->initialpose_received = false;
+  }
 
 #pragma omp parallel for num_threads(this->num_threads_)
   for (int i = 0; i < timestamps.size(); i++) {
@@ -2070,4 +2091,29 @@ void dlio::OdomNode::reloadGicp(){
 
   this->publish_keyframe_thread = std::thread( &dlio::OdomNode::publishKeyframe, this, this->keyframes[0], this->keyframe_timestamps[0] );
   this->publish_keyframe_thread.detach();
+}
+
+// 接收initialpose并读取ros数据记录到P_initial和Q_initial
+void dlio::OdomNode::callbackInitialpose(const geometry_msgs::PoseWithCovarianceStampedConstPtr ip) {
+    P_initial.x() = ip->pose.pose.position.x;
+    P_initial.y() = ip->pose.pose.position.y;
+
+    // 从消息中读取方向（四元数）
+    Q_initial.x() = ip->pose.pose.orientation.x;
+    Q_initial.y() = ip->pose.pose.orientation.y;
+    Q_initial.z() = ip->pose.pose.orientation.z;
+    Q_initial.w() = ip->pose.pose.orientation.w;
+
+    this->initialpose_received = true;
+
+    std::cout << "Initial Position: " << P_initial.transpose() << std::endl;
+    std::cout << "Initial Orientation (Quaternion): " << Q_initial.coeffs().transpose() << std::endl;
+}
+
+// 分离订阅initialpose的线程，否则map将加载不出来
+void dlio::OdomNode::initialposeThread() {
+    // 创建订阅者
+    initialpose_sub = nh.subscribe("initialpose", 1,
+        &OdomNode::callbackInitialpose, this,
+        ros::TransportHints().tcpNoDelay());
 }

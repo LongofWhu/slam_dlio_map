@@ -99,6 +99,8 @@ sensor_msgs/PointCloud2.h
 -
 tf2_ros/transform_broadcaster.h
 -
+geometry_msgs/PoseWithCovarianceStamped.h
+-
 boost/format.hpp
 -
 boost/circular_buffer.hpp
@@ -340,6 +342,26 @@ ros/builtin_message_traits.h
 ros/message_operations.h
 -
 geometry_msgs/Pose.h
+-
+
+/opt/ros/noetic/include/geometry_msgs/PoseWithCovarianceStamped.h
+string
+-
+vector
+-
+memory
+-
+ros/types.h
+-
+ros/serialization.h
+-
+ros/builtin_message_traits.h
+-
+ros/message_operations.h
+-
+std_msgs/Header.h
+-
+geometry_msgs/PoseWithCovariance.h
 -
 
 /opt/ros/noetic/include/geometry_msgs/Quaternion.h

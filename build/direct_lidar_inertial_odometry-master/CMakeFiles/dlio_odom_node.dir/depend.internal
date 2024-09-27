@@ -19,6 +19,7 @@ direct_lidar_inertial_odometry-master/CMakeFiles/dlio_odom_node.dir/src/dlio/odo
  /opt/ros/noetic/include/geometry_msgs/PoseArray.h
  /opt/ros/noetic/include/geometry_msgs/PoseStamped.h
  /opt/ros/noetic/include/geometry_msgs/PoseWithCovariance.h
+ /opt/ros/noetic/include/geometry_msgs/PoseWithCovarianceStamped.h
  /opt/ros/noetic/include/geometry_msgs/Quaternion.h
  /opt/ros/noetic/include/geometry_msgs/QuaternionStamped.h
  /opt/ros/noetic/include/geometry_msgs/Transform.h
@@ -510,6 +511,7 @@ direct_lidar_inertial_odometry-master/CMakeFiles/dlio_odom_node.dir/src/dlio/odo
  /opt/ros/noetic/include/geometry_msgs/PoseArray.h
  /opt/ros/noetic/include/geometry_msgs/PoseStamped.h
  /opt/ros/noetic/include/geometry_msgs/PoseWithCovariance.h
+ /opt/ros/noetic/include/geometry_msgs/PoseWithCovarianceStamped.h
  /opt/ros/noetic/include/geometry_msgs/Quaternion.h
  /opt/ros/noetic/include/geometry_msgs/QuaternionStamped.h
  /opt/ros/noetic/include/geometry_msgs/Transform.h

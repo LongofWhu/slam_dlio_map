@@ -30,6 +30,7 @@ private:
 
   void callbackPointCloud(const sensor_msgs::PointCloud2ConstPtr& pc);
   void callbackImu(const sensor_msgs::Imu::ConstPtr& imu);
+  void callbackInitialpose(const geometry_msgs::PoseWithCovarianceStampedConstPtr ip);
 
   void publishPose(const ros::TimerEvent& e);
 
@@ -89,6 +90,7 @@ private:
   // Subscribers
   ros::Subscriber lidar_sub;
   ros::Subscriber imu_sub;
+  ros::Subscriber initialpose_sub;
 
   // Publishers
   ros::Publisher odom_pub;
@@ -119,6 +121,8 @@ private:
   std::thread publish_keyframe_thread;
   std::thread metrics_thread;
   std::thread debug_thread;
+  std::thread initialpose_thread;
+  void initialposeThread();
 
   // Trajectory
   std::vector<std::pair<Eigen::Vector3f, Eigen::Quaternionf>> trajectory;
@@ -336,10 +340,13 @@ private:
   double geo_gbias_max_;
 
   bool loadFile;
+  bool initialpose_received;
   std::string mapFile;
   std::vector<float> p_prior;
   std::vector<float> q_prior;
   Eigen::Vector3f P_prior;
   Eigen::Quaternionf Q_prior;
+  Eigen::Vector2f P_initial;
+  Eigen::Quaternionf Q_initial;
 
 };

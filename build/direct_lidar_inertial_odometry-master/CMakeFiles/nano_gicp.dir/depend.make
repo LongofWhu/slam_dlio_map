@@ -17,6 +17,7 @@ direct_lidar_inertial_odometry-master/CMakeFiles/nano_gicp.dir/src/nano_gicp/lsq
 direct_lidar_inertial_odometry-master/CMakeFiles/nano_gicp.dir/src/nano_gicp/lsq_registration.cc.o: /opt/ros/noetic/include/geometry_msgs/PoseArray.h
 direct_lidar_inertial_odometry-master/CMakeFiles/nano_gicp.dir/src/nano_gicp/lsq_registration.cc.o: /opt/ros/noetic/include/geometry_msgs/PoseStamped.h
 direct_lidar_inertial_odometry-master/CMakeFiles/nano_gicp.dir/src/nano_gicp/lsq_registration.cc.o: /opt/ros/noetic/include/geometry_msgs/PoseWithCovariance.h
+direct_lidar_inertial_odometry-master/CMakeFiles/nano_gicp.dir/src/nano_gicp/lsq_registration.cc.o: /opt/ros/noetic/include/geometry_msgs/PoseWithCovarianceStamped.h
 direct_lidar_inertial_odometry-master/CMakeFiles/nano_gicp.dir/src/nano_gicp/lsq_registration.cc.o: /opt/ros/noetic/include/geometry_msgs/Quaternion.h
 direct_lidar_inertial_odometry-master/CMakeFiles/nano_gicp.dir/src/nano_gicp/lsq_registration.cc.o: /opt/ros/noetic/include/geometry_msgs/QuaternionStamped.h
 direct_lidar_inertial_odometry-master/CMakeFiles/nano_gicp.dir/src/nano_gicp/lsq_registration.cc.o: /opt/ros/noetic/include/geometry_msgs/Transform.h
@@ -507,6 +508,7 @@ direct_lidar_inertial_odometry-master/CMakeFiles/nano_gicp.dir/src/nano_gicp/nan
 direct_lidar_inertial_odometry-master/CMakeFiles/nano_gicp.dir/src/nano_gicp/nano_gicp.cc.o: /opt/ros/noetic/include/geometry_msgs/PoseArray.h
 direct_lidar_inertial_odometry-master/CMakeFiles/nano_gicp.dir/src/nano_gicp/nano_gicp.cc.o: /opt/ros/noetic/include/geometry_msgs/PoseStamped.h
 direct_lidar_inertial_odometry-master/CMakeFiles/nano_gicp.dir/src/nano_gicp/nano_gicp.cc.o: /opt/ros/noetic/include/geometry_msgs/PoseWithCovariance.h
+direct_lidar_inertial_odometry-master/CMakeFiles/nano_gicp.dir/src/nano_gicp/nano_gicp.cc.o: /opt/ros/noetic/include/geometry_msgs/PoseWithCovarianceStamped.h
 direct_lidar_inertial_odometry-master/CMakeFiles/nano_gicp.dir/src/nano_gicp/nano_gicp.cc.o: /opt/ros/noetic/include/geometry_msgs/Quaternion.h
 direct_lidar_inertial_odometry-master/CMakeFiles/nano_gicp.dir/src/nano_gicp/nano_gicp.cc.o: /opt/ros/noetic/include/geometry_msgs/QuaternionStamped.h
 direct_lidar_inertial_odometry-master/CMakeFiles/nano_gicp.dir/src/nano_gicp/nano_gicp.cc.o: /opt/ros/noetic/include/geometry_msgs/Transform.h
